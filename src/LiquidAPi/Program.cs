@@ -1,3 +1,6 @@
+using LiquidApi.Configuration;
+using LiquidApi.Services.MusicApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Add TheAudioDB config
+builder.Services.AddOptions<TheAudioDbConfiguration>()
+    .BindConfiguration("TheAudioDbConfiguration")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IMusicApiClient, TheAudioDbClient>();
 
 var app = builder.Build();
 
