@@ -4,31 +4,34 @@ namespace LiquidApi.Extensions;
 
 internal static class SqlDataReaderExtensions
 {
-    public static int GetInteger(this SqlDataReader reader, string columnName)
+    extension(SqlDataReader reader)
     {
-        var ordinal = reader.GetOrdinal(columnName);
+        public int GetInteger(string columnName)
+        {
+            var ordinal = reader.GetOrdinal(columnName);
 
-        return reader.GetInt32(ordinal);
-    }
-    
-    public static string GetString(this SqlDataReader reader, string columnName)
-    {
-        var ordinal = reader.GetOrdinal(columnName);
+            return reader.GetInt32(ordinal);
+        }
 
-        return reader.GetString(ordinal);
-    }
-   
-    public static int? GetNullableInt(this SqlDataReader reader, string columnName)
-    {
-        var ordinal = reader.GetOrdinal(columnName);
+        public string GetString(string columnName)
+        {
+            var ordinal = reader.GetOrdinal(columnName);
 
-        return reader.IsDBNull(ordinal) ? null : reader.GetInt32(ordinal);
-    }
+            return reader.GetString(ordinal);
+        }
 
-    public static string? GetNullableString(this SqlDataReader reader, string columnName)
-    {
-        var ordinal = reader.GetOrdinal(columnName);
+        public int? GetNullableInt(string columnName)
+        {
+            var ordinal = reader.GetOrdinal(columnName);
 
-        return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
+            return reader.IsDBNull(ordinal) ? null : reader.GetInt32(ordinal);
+        }
+
+        public string? GetNullableString(string columnName)
+        {
+            var ordinal = reader.GetOrdinal(columnName);
+
+            return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
+        }
     }
 }
