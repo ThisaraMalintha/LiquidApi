@@ -1,5 +1,6 @@
 using LiquidApi.Configuration;
 using LiquidApi.Data;
+using LiquidApi.Services;
 using LiquidApi.Services.MusicApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,7 @@ builder.Services.AddOptions<TheAudioDbConfiguration>()
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IMusicApiClient, TheAudioDbClient>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+builder.Services.AddScoped<IMusicService, MusicService>();
 
 var app = builder.Build();
 
