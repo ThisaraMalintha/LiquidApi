@@ -7,5 +7,5 @@ public interface IMusicApiClient
     /// </summary>
     /// <param name="artistId"></param>
     /// <returns></returns>
-    Task<Artist?> GetArtistDetails(string artistId);
+    Task<Artist?> GetArtistDetails(int artistId);
 }

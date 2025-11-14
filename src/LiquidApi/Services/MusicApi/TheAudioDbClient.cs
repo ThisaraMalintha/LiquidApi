@@ -16,7 +16,7 @@ public class TheAudioDbClient : IMusicApiClient
         _audioDbConfig = audioDbConfig.Value ?? throw new ArgumentNullException(nameof(audioDbConfig));
     }
 
-    public async Task<Artist?> GetArtistDetails(string artistId)
+    public async Task<Artist?> GetArtistDetails(int artistId)
     {
         var endpoint = GetAbsoluteUrl($"/artist.php?i={artistId}");
 

@@ -8,6 +8,9 @@ public class TheAudioDbArtistResponse
     public required IReadOnlyList<TheAudioDbArtist> Artists { get; init; }
 }
 
+/// <summary>
+/// A simplified view of the audio db artist object.
+/// </summary>
 public class TheAudioDbArtist
 {
     [JsonPropertyName("idArtist")]
@@ -19,13 +22,25 @@ public class TheAudioDbArtist
     [JsonPropertyName("strGenre")]
     public required string Genre { get; init; }
 
+    [JsonPropertyName("strCountry")]
+    public required string Country { get; init; }
+
+    [JsonPropertyName("intFormedYear")]
+    public required int FormedYear { get; init; }
+
+    [JsonPropertyName("intMembers")]
+    public required int MemberCount { get; init; }
+
     public Artist ToArtist()
     {
         return new Artist
         {
             Id = Id,
             Name = Name,
-            Genre = Genre
+            Genre = Genre,
+            Country = Country,
+            FormedYear = FormedYear,
+            MemberCount = MemberCount
         };
     }
 }

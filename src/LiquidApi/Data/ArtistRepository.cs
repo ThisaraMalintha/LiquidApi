@@ -1,0 +1,93 @@
+﻿using Microsoft.Data.SqlClient;
+
+namespace LiquidApi.Data;
+
+public class ArtistRepository : IArtistRepository
+{
+    private string? _connectionString;
+
+    public ArtistRepository(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("SqlDatabase");
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(_connectionString);
+    }
+
+    public async Task<Artist?> GetArtist(int artistId)
+    {
+        const string sql =
+            """
+            SELECT
+                artist_id,
+                name,
+                genre,
+                country,
+                formed_year,
+                member_count
+            FROM
+                artist
+            WHERE
+                artist_id = @id
+            """;
+
+        using var connection = new SqlConnection(_connectionString);
+        using var cmd = new SqlCommand
+        {
+            Connection = connection,
+            CommandText = sql,
+            Parameters =
+            {
+                new SqlParameter("@id", artistId)
+            }
+        };
+
+        await connection.OpenAsync();
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+        {
+            return null;
+        }
+
+        return new Artist
+        {
+            Id = reader.GetInt32(reader.GetOrdinal("artist_id")),
+            Name = reader.GetString(reader.GetOrdinal("name")),
+            Genre = reader.GetString(reader.GetOrdinal("genre")),
+            Country = reader.GetString(reader.GetOrdinal("country")),
+            FormedYear = reader.GetInt32(reader.GetOrdinal("formed_year")),
+            MemberCount = reader.GetInt32(reader.GetOrdinal("member_count")),
+        };
+
+    }
+
+    public async Task SaveArtist(Artist artist)
+    {
+        const string sql =
+            """
+            INSERT INTO artist
+                (artist_id, name, genre, country, formed_year, member_count)
+            VALUES
+                (@artistId, @name, @genre, @country, @formedYear, @memberCount)
+            """;
+
+        using var connection = new SqlConnection(_connectionString);
+        using var cmd = new SqlCommand
+        {
+            Connection = connection,
+            CommandText = sql,
+            Parameters =
+            {
+                new SqlParameter("@artistId", artist.Id),
+                new SqlParameter("@name", artist.Name),
+                new SqlParameter("@genre", artist.Genre),
+                new SqlParameter("@country", artist.Country),
+                new SqlParameter("@formedYear", artist.FormedYear),
+                new SqlParameter("@memberCount", artist.MemberCount),
+            }
+        };
+
+        await connection.OpenAsync();
+        await cmd.ExecuteNonQueryAsync();
+    }
+}
