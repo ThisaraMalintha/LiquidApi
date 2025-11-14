@@ -1,4 +1,5 @@
 ﻿using LiquidApi.Data;
+using LiquidApi.Dto;
 using LiquidApi.Exceptions;
 using LiquidApi.Services.MusicApi;
 
@@ -19,35 +20,18 @@ public class MusicService : IMusicService
         _albumRepository = albumRepository;
     }
 
-    public async Task<Artist?> GetArtist(int artistId)
+    public async Task<ArtistDto?> GetArtist(int artistId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(artistId);
+        var artist = await GetArtistInternal(artistId);
 
-        var cachedArtist = await _artistRepository.GetArtist(artistId);
-
-        if (cachedArtist == null)
-        {
-            // No cache hit
-            var audioDbArtist = await _musicApiClient.GetArtistDetails(artistId);
-
-            if (audioDbArtist == null)
-            {
-                // in a real system we should track the not found responses to
-                // prevent any malicious user exploiting repeated api calls to non existent artist ids
-                return null;
-            }
-
-            await _artistRepository.SaveArtist(audioDbArtist);
-
-            return audioDbArtist;
-        }
-
-        return cachedArtist;
+        return artist == null
+            ? null
+            : ArtistDto.FromArtist(artist);
     }
 
-    public async Task<IReadOnlyList<Album>> GetAlbumsByArtist(int artistId)
+    public async Task<IReadOnlyList<AlbumDto>> GetAlbumsByArtist(int artistId)
     {
-        var artist = await GetArtist(artistId);
+        var artist = await GetArtistInternal(artistId);
 
         if (artist == null)
         {
@@ -63,6 +47,32 @@ public class MusicService : IMusicService
             await _albumRepository.SaveAlbums(albums);
         }
 
-        return albums;
+        return albums
+            .Select(album => AlbumDto.FromArtistAndAlbum(artist, album))
+            .ToList();
+    }
+
+    private async Task<Artist?> GetArtistInternal(int artistId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(artistId);
+
+        var artist = await _artistRepository.GetArtist(artistId);
+
+        if (artist == null)
+        {
+            // No cache hit
+            artist = await _musicApiClient.GetArtistDetails(artistId);
+
+            if (artist == null)
+            {
+                // in a real system we should track the not found responses to
+                // prevent any malicious user exploiting repeated api calls to non existent artist ids
+                return null;
+            }
+
+            await _artistRepository.SaveArtist(artist);
+        }
+
+        return artist;
     }
 }
