@@ -2,17 +2,8 @@
 
 namespace LiquidApi.Data;
 
-public class ArtistRepository : IArtistRepository
+public class ArtistRepository(IDbConnectionProvider connectionProvider) : IArtistRepository
 {
-    private string? _connectionString;
-
-    public ArtistRepository(IConfiguration configuration)
-    {
-        _connectionString = configuration.GetConnectionString("SqlDatabase");
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(_connectionString);
-    }
-
     public async Task<Artist?> GetArtist(int artistId)
     {
         const string sql =
@@ -30,7 +21,7 @@ public class ArtistRepository : IArtistRepository
                 artist_id = @id
             """;
 
-        using var connection = new SqlConnection(_connectionString);
+        using var connection = connectionProvider.GetConnection();
         using var cmd = new SqlCommand
         {
             Connection = connection,
@@ -71,7 +62,7 @@ public class ArtistRepository : IArtistRepository
                 (@artistId, @name, @genre, @country, @formedYear, @memberCount)
             """;
 
-        using var connection = new SqlConnection(_connectionString);
+        using var connection = connectionProvider.GetConnection();
         using var cmd = new SqlCommand
         {
             Connection = connection,

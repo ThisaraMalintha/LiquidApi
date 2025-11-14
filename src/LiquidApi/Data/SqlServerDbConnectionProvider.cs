@@ -1,0 +1,25 @@
+﻿using Microsoft.Data.SqlClient;
+
+namespace LiquidApi.Data;
+
+public class SqlServerDbConnectionProvider : IDbConnectionProvider
+{
+    private string _connectionString;
+
+    public SqlServerDbConnectionProvider(IConfiguration configuration)
+    {
+        var connectionStringConfig = configuration.GetConnectionString("SqlDatabase");
+
+        if (string.IsNullOrWhiteSpace(connectionStringConfig))
+        {
+            throw new Exception("SqlDatabase connection string not found");
+        }
+
+        _connectionString = connectionStringConfig;
+    }
+
+    public SqlConnection GetConnection()
+    {
+        return new SqlConnection(_connectionString);
+    }
+}

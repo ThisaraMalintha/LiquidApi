@@ -8,12 +8,15 @@ public class MusicService : IMusicService
 {
     private readonly IMusicApiClient _musicApiClient;
     private readonly IArtistRepository _artistRepository;
+    private readonly IAlbumRepository _albumRepository;
 
     public MusicService(IMusicApiClient musicApiClient,
-        IArtistRepository artistRepository)
+        IArtistRepository artistRepository,
+        IAlbumRepository albumRepository)
     {
         _musicApiClient = musicApiClient;
         _artistRepository = artistRepository;
+        _albumRepository = albumRepository;
     }
 
     public async Task<Artist?> GetArtist(int artistId)
@@ -51,6 +54,15 @@ public class MusicService : IMusicService
             throw new EntityNotFoundException(artistId, "Artist not found");
         }
 
-        return await _musicApiClient.GetAlbumsByArtist(artist.Name);
+        var albums = await _albumRepository.GetAlbumsByArtistId(artistId);
+
+        if (!albums.Any())
+        {
+            albums = await _musicApiClient.GetAlbumsByArtist(artist.Name);
+
+            await _albumRepository.SaveAlbums(albums);
+        }
+
+        return albums;
     }
 }

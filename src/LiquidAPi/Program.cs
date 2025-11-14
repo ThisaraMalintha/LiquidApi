@@ -18,8 +18,12 @@ builder.Services.AddOptions<TheAudioDbConfiguration>()
     .ValidateOnStart();
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IMusicApiClient, TheAudioDbClient>();
+
+builder.Services.AddScoped<IDbConnectionProvider, SqlServerDbConnectionProvider>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
+
+builder.Services.AddScoped<IMusicApiClient, TheAudioDbClient>();
 builder.Services.AddScoped<IMusicService, MusicService>();
 
 var app = builder.Build();

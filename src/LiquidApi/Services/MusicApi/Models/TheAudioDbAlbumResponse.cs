@@ -14,7 +14,7 @@ public class TheAudioDbAlbumResponse
 public class TheAudioDbAlbum
 {
     [JsonPropertyName("idAlbum")]
-    public required string Id { get; init; }
+    public required int Id { get; init; }
 
     [JsonPropertyName("idArtist")]
     public required int ArtistId { get; init; }
@@ -23,7 +23,7 @@ public class TheAudioDbAlbum
     public required string Name { get; init; }
 
     [JsonPropertyName("strGenre")]
-    public required string Genre { get; init; }
+    public required string? Genre { get; init; }
 
     [JsonPropertyName("intYearReleased")]
     public required uint ReleaseYear { get; init; }
@@ -34,8 +34,8 @@ public class TheAudioDbAlbum
         {
             Id = Id,
             ArtistId = ArtistId,
-            Name = Name,
-            Genre = Genre,
+            Title = Name,
+            Genre = Genre ?? "Unknown",
             ReleaseYear = ReleaseYear
         };
     }
