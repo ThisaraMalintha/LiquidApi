@@ -1,6 +1,7 @@
 ﻿using LiquidApi.Dto;
 using LiquidApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace LiquidApi.Controllers;
 
@@ -8,10 +9,26 @@ namespace LiquidApi.Controllers;
 [ApiController]
 public class ArtistsController(IMusicService musicService) : ControllerBase
 {
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ArtistDto?>> Get(int id)
+    [HttpGet("{artistId}")]
+    public async Task<ActionResult<ArtistDto?>> GetArtistById(int artistId)
     {
-        var artist = await musicService.GetArtist(id);
+        var artist = await musicService.GetArtist(artistId);
+
+        if (artist == null)
+        {
+            return NotFound();
+        }
+
+        return artist;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ArtistDto>> GetArtistByName(
+        [FromQuery(Name = "name")]
+        [Required]
+        string artistName)
+    {
+        var artist = await musicService.GetArtistByName(artistName);
 
         if (artist == null)
         {

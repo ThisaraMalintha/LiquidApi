@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace LiquidApi.Data;
+namespace LiquidApi.Data.Repositories;
 
 public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumRepository
 {

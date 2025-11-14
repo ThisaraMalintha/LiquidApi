@@ -1,4 +1,4 @@
-﻿using LiquidApi.Data;
+﻿using LiquidApi.Data.Repositories;
 using LiquidApi.Dto;
 using LiquidApi.Exceptions;
 using LiquidApi.Services.MusicApi;
@@ -40,7 +40,7 @@ public class MusicService : IMusicService
 
         var albums = await _albumRepository.GetAlbumsByArtistId(artistId);
 
-        if (!albums.Any())
+        if (albums.Count == 0)
         {
             albums = await _musicApiClient.GetAlbumsByArtist(artist.Name);
 
@@ -56,12 +56,12 @@ public class MusicService : IMusicService
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(artistId);
 
-        var artist = await _artistRepository.GetArtist(artistId);
+        var artist = await _artistRepository.GetArtistById(artistId);
 
         if (artist == null)
         {
             // No cache hit
-            artist = await _musicApiClient.GetArtistDetails(artistId);
+            artist = await _musicApiClient.GetArtistById(artistId);
 
             if (artist == null)
             {
@@ -74,5 +74,14 @@ public class MusicService : IMusicService
         }
 
         return artist;
+    }
+
+    public async Task<ArtistDto?> GetArtistByName(string artistName)
+    {
+        var artist = await _musicApiClient.GetArtistByName(artistName);
+
+        return artist == null
+            ? null
+            : ArtistDto.FromArtist(artist);
     }
 }

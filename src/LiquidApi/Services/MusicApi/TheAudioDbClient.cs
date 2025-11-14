@@ -18,11 +18,11 @@ public class TheAudioDbClient : IMusicApiClient
         _audioDbConfig = audioDbConfig.Value ?? throw new ArgumentNullException(nameof(audioDbConfig));
     }
 
-    public async Task<Artist?> GetArtistDetails(int artistId)
+    public async Task<Artist?> GetArtistById(int artistId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(artistId);
 
-        var endpoint = GetAbsoluteUrl($"/artist.php?i={artistId}");
+        var endpoint = GetAbsoluteUrl($"artist.php?i={artistId}");
 
         using var httpClient = _httpClientFactory.CreateClient();
 
@@ -30,17 +30,35 @@ public class TheAudioDbClient : IMusicApiClient
 
         return result.StatusCode switch
         {
-            HttpStatusCode.OK => await ParseResponse(result),
+            HttpStatusCode.OK => await ParseArtistResponse(result),
             HttpStatusCode.NotFound or HttpStatusCode.NoContent => null,
             _ => throw new TheAudioDbException("Artist lookup failed")
         };
+    }
 
-        static async Task<Artist?> ParseResponse(HttpResponseMessage result)
+    public async Task<Artist?> GetArtistByName(string artistName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(artistName);
+
+        var endpoint = GetAbsoluteUrl($"search.php?s={artistName}");
+
+        using var httpClient = _httpClientFactory.CreateClient();
+
+        var response = await httpClient.GetAsync(endpoint);
+
+        return response.StatusCode switch
         {
-            var artistResult = await result.Content.ReadFromJsonAsync<TheAudioDbArtistResponse>();
+            HttpStatusCode.OK => await ParseArtistResponse(response),
+            HttpStatusCode.NotFound or HttpStatusCode.NoContent => null,
+            _ => throw new TheAudioDbException("Album search request failed.")
+        };
+    }
 
-            return artistResult?.Artists?.FirstOrDefault()?.ToArtist();
-        }
+    private static async Task<Artist?> ParseArtistResponse(HttpResponseMessage result)
+    {
+        var artistResult = await result.Content.ReadFromJsonAsync<TheAudioDbArtistResponse>();
+
+        return artistResult?.Artists?.FirstOrDefault()?.ToArtist();
     }
 
     public async Task<IReadOnlyList<Album>> GetAlbumsByArtist(string artistName)
@@ -55,25 +73,25 @@ public class TheAudioDbClient : IMusicApiClient
 
         return response.StatusCode switch
         {
-            HttpStatusCode.OK => await ParseResponse(response),
+            HttpStatusCode.OK => await ParseAlbumsResponse(response),
             HttpStatusCode.NotFound or HttpStatusCode.NoContent => [],
             _ => throw new TheAudioDbException("Album search request failed.")
         };
+    }
 
-        static async Task<IReadOnlyList<Album>> ParseResponse(HttpResponseMessage response)
+    private static async Task<IReadOnlyList<Album>> ParseAlbumsResponse(HttpResponseMessage response)
+    {
+        var albumResponse = await response.Content.ReadFromJsonAsync<TheAudioDbAlbumResponse>()
+            ?? throw new TheAudioDbException("Album response parsing failed");
+
+        if (albumResponse?.Albums == null)
         {
-            var albumResponse = await response.Content.ReadFromJsonAsync<TheAudioDbAlbumResponse>()
-                ?? throw new TheAudioDbException("Album response parsing failed");
-
-            if (albumResponse?.Albums == null)
-            {
-                return [];
-            }
-
-            return albumResponse.Albums
-                .Select(a => a.ToAlbumEntity())
-                .ToList();
+            return [];
         }
+
+        return albumResponse.Albums
+            .Select(a => a.ToAlbumEntity())
+            .ToList();
     }
 
     private string GetAbsoluteUrl(string path)

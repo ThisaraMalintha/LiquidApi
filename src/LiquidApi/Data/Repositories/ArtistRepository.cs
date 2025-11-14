@@ -1,10 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace LiquidApi.Data;
+namespace LiquidApi.Data.Repositories;
 
 public class ArtistRepository(IDbConnectionProvider connectionProvider) : IArtistRepository
 {
-    public async Task<Artist?> GetArtist(int artistId)
+    public async Task<Artist?> GetArtistById(int artistId)
     {
         const string sql =
             """

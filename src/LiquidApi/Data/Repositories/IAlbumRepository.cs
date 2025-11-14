@@ -1,4 +1,4 @@
-﻿namespace LiquidApi.Data;
+﻿namespace LiquidApi.Data.Repositories;
 
 public interface IAlbumRepository
 {

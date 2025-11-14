@@ -7,7 +7,14 @@ public interface IMusicApiClient
     /// </summary>
     /// <param name="artistId"></param>
     /// <returns></returns>
-    Task<Artist?> GetArtistDetails(int artistId);
+    Task<Artist?> GetArtistById(int artistId);
+    
+    /// <summary>
+    /// Get the details of a specific artist by artist's exact name.
+    /// </summary>
+    /// <param name="artistId"></param>
+    /// <returns></returns>
+    Task<Artist?> GetArtistByName(string artistName);
 
     /// <summary>
     /// Get all the albums of an artist.
