@@ -26,7 +26,7 @@ public class TheAudioDbAlbum
     public required string? Genre { get; init; }
 
     [JsonPropertyName("intYearReleased")]
-    public required uint ReleaseYear { get; init; }
+    public required int? ReleaseYear { get; init; }
 
     public Album ToAlbumEntity()
     {
@@ -35,7 +35,7 @@ public class TheAudioDbAlbum
             Id = Id,
             ArtistId = ArtistId,
             Title = Name,
-            Genre = Genre ?? "Unknown",
+            Genre = Genre,
             ReleaseYear = ReleaseYear
         };
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using LiquidApi.Extensions;
+using Microsoft.Data.SqlClient;
 
 namespace LiquidApi.Data.Repositories;
 
@@ -40,11 +41,11 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
         {
             albums.Add(new Album
             {
-                Id = reader.GetInt32(reader.GetOrdinal("album_id")),
-                ArtistId = reader.GetInt32(reader.GetOrdinal("artist_id")),
-                Title = reader.GetString(reader.GetOrdinal("title")),
-                Genre = reader.GetString(reader.GetOrdinal("genre")),
-                ReleaseYear = (uint)reader.GetInt32(reader.GetOrdinal("release_year")),
+                Id = reader.GetInteger("album_id"),
+                ArtistId = reader.GetInteger("artist_id"),
+                Title = reader.GetString("title"),
+                Genre = reader.GetNullableString("genre"),
+                ReleaseYear = reader.GetNullableInt("release_year")
             });
         }
         
@@ -79,8 +80,8 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
                     new SqlParameter("@albumId", album.Id),
                     new SqlParameter("@artistId", album.ArtistId),
                     new SqlParameter("@title", album.Title),
-                    new SqlParameter("@genre", album.Genre),
-                    new SqlParameter("@releaseYear", (int)album.ReleaseYear)
+                    new SqlParameter("@genre", album.Genre == null ? DBNull.Value : album.Genre),
+                    new SqlParameter("@releaseYear", album.ReleaseYear.HasValue ? (int)album.ReleaseYear : DBNull.Value)
                 }
             };
 

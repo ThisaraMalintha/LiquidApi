@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using LiquidApi.Extensions;
+using Microsoft.Data.SqlClient;
 
 namespace LiquidApi.Data.Repositories;
 
@@ -42,12 +43,12 @@ public class ArtistRepository(IDbConnectionProvider connectionProvider) : IArtis
 
         return new Artist
         {
-            Id = reader.GetInt32(reader.GetOrdinal("artist_id")),
-            Name = reader.GetString(reader.GetOrdinal("name")),
-            Genre = reader.GetString(reader.GetOrdinal("genre")),
-            Country = reader.GetString(reader.GetOrdinal("country")),
-            FormedYear = reader.GetInt32(reader.GetOrdinal("formed_year")),
-            MemberCount = reader.GetInt32(reader.GetOrdinal("member_count")),
+            Id = reader.GetInteger("artist_id"),
+            Name = reader.GetString("name"),
+            Genre = reader.GetString("genre"),
+            Country = reader.GetString("country"),
+            FormedYear = reader.GetInteger("formed_year"),
+            MemberCount = reader.GetInteger("member_count"),
         };
 
     }
