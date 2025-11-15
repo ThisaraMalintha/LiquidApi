@@ -37,6 +37,6 @@ CREATE TABLE [dbo].[artist_alias]
 (
 	[artist_alias_id] INTEGER PRIMARY KEY IDENTITY,
 	[artist_id] INTEGER NOT NULL FOREIGN KEY REFERENCES [dbo].[artist]([artist_id]),
-	[alias] NVARCHAR(1000) NOT NULL UNIQUE CHECK (LEN([alias]) > 0)
+	[alias] NVARCHAR(200) NOT NULL UNIQUE CHECK (LEN([alias]) > 0)
 )
 GO
