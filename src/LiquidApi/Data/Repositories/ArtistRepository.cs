@@ -44,10 +44,10 @@ internal class ArtistRepository(IDbConnectionProvider connectionProvider) : IArt
         {
             Id = reader.GetInteger("artist_id"),
             Name = reader.GetString("name"),
-            Genre = reader.GetString("genre"),
-            Country = reader.GetString("country"),
-            FormedYear = reader.GetInteger("formed_year"),
-            MemberCount = reader.GetInteger("member_count"),
+            Genre = reader.GetNullableString("genre"),
+            Country = reader.GetNullableString("country"),
+            FormedYear = reader.GetNullableInteger("formed_year"),
+            MemberCount = reader.GetNullableInteger("member_count"),
         };
 
     }
@@ -71,10 +71,18 @@ internal class ArtistRepository(IDbConnectionProvider connectionProvider) : IArt
             {
                 new SqlParameter("@artistId", artist.Id),
                 new SqlParameter("@name", artist.Name),
-                new SqlParameter("@genre", artist.Genre),
-                new SqlParameter("@country", artist.Country),
-                new SqlParameter("@formedYear", artist.FormedYear),
-                new SqlParameter("@memberCount", artist.MemberCount),
+
+                new SqlParameter("@genre", 
+                    string.IsNullOrWhiteSpace(artist.Genre) ? DBNull.Value : artist.Genre),
+
+                new SqlParameter("@country", 
+                    string.IsNullOrWhiteSpace(artist.Country) ? DBNull.Value : artist.Country),
+
+                new SqlParameter("@formedYear", 
+                    artist.FormedYear.HasValue ? artist.FormedYear : DBNull.Value),
+
+                new SqlParameter("@memberCount",
+                    artist.MemberCount.HasValue ? artist.MemberCount : DBNull.Value),
             }
         };
 

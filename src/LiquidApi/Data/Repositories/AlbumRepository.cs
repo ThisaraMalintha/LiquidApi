@@ -70,7 +70,7 @@ internal class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbu
                     ArtistId = reader.GetInteger("artist_id"),
                     Title = reader.GetString("title"),
                     Genre = reader.GetNullableString("genre"),
-                    ReleaseYear = reader.GetNullableInt("release_year")
+                    ReleaseYear = reader.GetNullableInteger("release_year")
                 });
             }
         }
@@ -106,8 +106,12 @@ internal class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbu
                     new SqlParameter("@albumId", album.Id),
                     new SqlParameter("@artistId", album.ArtistId),
                     new SqlParameter("@title", album.Title),
-                    new SqlParameter("@genre", album.Genre == null ? DBNull.Value : album.Genre),
-                    new SqlParameter("@releaseYear", album.ReleaseYear.HasValue ? (int)album.ReleaseYear : DBNull.Value)
+
+                    new SqlParameter("@genre",
+                        album.Genre == null ? DBNull.Value : album.Genre),
+
+                    new SqlParameter("@releaseYear",
+                        album.ReleaseYear.HasValue ? (int)album.ReleaseYear : DBNull.Value)
                 }
             };
 

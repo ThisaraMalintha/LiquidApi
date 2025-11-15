@@ -20,16 +20,16 @@ public class TheAudioDbArtist
     public required string Name { get; init; }
 
     [JsonPropertyName("strGenre")]
-    public required string Genre { get; init; }
+    public required string? Genre { get; init; }
 
     [JsonPropertyName("strCountry")]
-    public required string Country { get; init; }
+    public required string? Country { get; init; }
 
     [JsonPropertyName("intFormedYear")]
-    public required int FormedYear { get; init; }
+    public required int? FormedYear { get; init; }
 
     [JsonPropertyName("intMembers")]
-    public required int MemberCount { get; init; }
+    public required int? MemberCount { get; init; }
 
     public Artist ToArtist()
     {

@@ -20,7 +20,7 @@ internal static class SqlDataReaderExtensions
             return reader.GetString(ordinal);
         }
 
-        public int? GetNullableInt(string columnName)
+        public int? GetNullableInteger(string columnName)
         {
             var ordinal = reader.GetOrdinal(columnName);
 
