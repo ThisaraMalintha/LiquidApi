@@ -36,7 +36,7 @@ public class TheAudioDbAlbum
             ArtistId = ArtistId,
             Title = Name,
             Genre = Genre,
-            ReleaseYear = ReleaseYear
+            ReleaseYear = ReleaseYear == 0 ? null : ReleaseYear
         };
     }
 }

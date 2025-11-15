@@ -39,8 +39,9 @@ public class TheAudioDbArtist
             Name = Name,
             Genre = Genre,
             Country = Country,
-            FormedYear = FormedYear,
-            MemberCount = MemberCount
+            // TheMusicDb sometimes return 0 instead of null :(
+            FormedYear = FormedYear == 0 ? null : FormedYear,
+            MemberCount = MemberCount == 0 ? null : MemberCount
         };
     }
 }

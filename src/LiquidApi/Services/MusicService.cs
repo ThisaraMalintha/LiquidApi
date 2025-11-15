@@ -97,10 +97,35 @@ internal class MusicService : IMusicService
 
     public async Task<ArtistDto?> GetArtistByName(string artistName)
     {
-        var artist = await _musicApiClient.GetArtistByName(artistName);
+        var artistAliasText = new ArtistAliasText(artistName);
 
-        return artist == null
-            ? null
-            : ArtistDto.FromArtist(artist);
+        var artist = await _artistRepository.GetArtistByAlias(artistAliasText);
+
+        if (artist == null)
+        {
+            artist = await _musicApiClient.GetArtistByName(artistName);
+
+            if (artist == null)
+            {
+                return null;
+            }
+
+            // Save artist if the search hit points to an un-cached artist.
+            if (!await _artistRepository.IsArtistExists(artist.Id))
+            {
+                await _artistRepository.SaveArtist(artist);
+            }
+
+            // Cache artist search hit
+            var artistAlias = new ArtistAlias
+            {
+                ArtistId = artist.Id,
+                Alias = artistAliasText
+            };
+
+            await _artistRepository.SaveArtistAlias(artistAlias);
+        }
+
+        return ArtistDto.FromArtist(artist);
     }
 }
