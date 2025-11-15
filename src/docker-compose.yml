@@ -5,15 +5,22 @@ services:
       context: .
       dockerfile: LiquidApi/Dockerfile
     environment:
-      - ConnectionStrings__SqlDatabase=Server=sql_express;Database=LiquidApi;User Id=sa;Password=user@123; Trust Server Certificate=True
+      - ConnectionStrings__SqlDatabase=Server=sql_express;Database=LiquidApi;User Id=sa;Password=${SQL_PWD:-user@123}; Trust Server Certificate=True
     ports:
-      - 10000:8080
+      - ${API_PORT:-10000}:8080
+    depends_on:
+      sql_express:
+        condition: service_healthy
 
   sql_express:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: liquid_api_sql_express
     environment:
       - ACCEPT_EULA=True
-      - MSSQL_SA_PASSWORD=user@123
-    ports:
-      - 1533:1433
+      - MSSQL_SA_PASSWORD=${SQL_PWD:-user@123}
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SQL_PWD:-user@123} -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
