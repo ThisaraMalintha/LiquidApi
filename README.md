@@ -15,9 +15,8 @@ Demo web api to fetch and cache music catalog data from the [TheAudioDB](https:/
 
 ### Using Docker
 1. Navigate to the `src/LiquidApi` directory
-3. Run `docker compose up -d`
-4. Run `docker exec -it liquid_api_sql_express bash`
-5. Run the command `cat ../scripts/sql/db_schema.sql | docker exec -i liquid_api_sql_express /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "user@123" -d master -C` to run the database schema script against the sql server container
+2. Run `docker compose up -d`
+3. Run the command `cat ../scripts/sql/db_schema.sql | docker exec -i liquid_api_sql_express /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "user@123" -d master -C` to run the database schema script against the sql server container
 
 ### Using dotnet-cli
 
