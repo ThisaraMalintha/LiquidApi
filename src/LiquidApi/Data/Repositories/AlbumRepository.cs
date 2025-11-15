@@ -2,29 +2,26 @@
 
 namespace LiquidApi.Data.Repositories;
 
-public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumRepository
+internal class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumRepository
 {
     public async Task<PaginatedResult<Album>> GetAlbumsByArtistId(int artistId,
         int offset, int limit)
     {
         const string sql =
             """
-            WITH totalCount AS 
-            (
-              SELECT 
-                COUNT(1) AS count
-              FROM 
-                album
-              WHERE
-                artist_id = @artistId
-            )
+            SELECT 
+              COUNT(1) AS total_count
+            FROM 
+              album
+            WHERE
+              artist_id = @artistId;
+
             SELECT 
               album_id,
               artist_id,
               title,
               genre,
-              release_year,
-              (SELECT count FROM totalCount) AS total_count
+              release_year
             FROM
               album
             WHERE
@@ -34,7 +31,7 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
             OFFSET 
               @offset ROWS
             FETCH NEXT 
-              @pageSize ROWS ONLY
+              @pageSize ROWS ONLY;
             """;
 
         using var connection = connectionProvider.GetConnection();
@@ -53,24 +50,29 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
         await connection.OpenAsync();
         using var reader = await cmd.ExecuteReaderAsync();
 
-        var albums = new List<Album>();
         var total = 0;
-
+        // read total count result first
         while (await reader.ReadAsync())
         {
-            if (total == 0)
-            {
-                total = reader.GetInteger("total_count");
-            }
+            total = reader.GetInteger("total_count");
+        }
 
-            albums.Add(new Album
+        var albums = new List<Album>();
+
+        // read albums if there any from the next result set.
+        if (await reader.NextResultAsync())
+        {
+            while (await reader.ReadAsync())
             {
-                Id = reader.GetInteger("album_id"),
-                ArtistId = reader.GetInteger("artist_id"),
-                Title = reader.GetString("title"),
-                Genre = reader.GetNullableString("genre"),
-                ReleaseYear = reader.GetNullableInt("release_year")
-            });
+                albums.Add(new Album
+                {
+                    Id = reader.GetInteger("album_id"),
+                    ArtistId = reader.GetInteger("artist_id"),
+                    Title = reader.GetString("title"),
+                    Genre = reader.GetNullableString("genre"),
+                    ReleaseYear = reader.GetNullableInt("release_year")
+                });
+            }
         }
 
         return new(albums, total);
