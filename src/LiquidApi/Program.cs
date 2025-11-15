@@ -20,7 +20,7 @@ builder.Services.AddOptions<TheAudioDbConfiguration>()
     .ValidateOnStart();
 
 // Custom services
-builder.Services.AddScoped<IDbConnectionProvider, SqlServerDbConnectionProvider>();
+builder.Services.AddSingleton<IDbConnectionProvider, SqlServerDbConnectionProvider>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 

@@ -91,7 +91,7 @@ internal class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbu
         using var connection = connectionProvider.GetConnection();
         await connection.OpenAsync();
 
-        // Creating a transsaction since we need all or nothing caching semantics
+        // Creating a transaction since we need all or nothing caching semantics
         using var transaction = await connection.BeginTransactionAsync();
 
         foreach (var album in albums)

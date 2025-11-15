@@ -20,6 +20,5 @@ public record ArtistAliasText
     public override string ToString() => Alias;
 
     // Implicit casts to make it easier to use as direct strings
-
-    public static implicit operator string(ArtistAliasText text) => text.Alias.ToLower();
+    public static implicit operator string(ArtistAliasText text) => text.Alias;
 }

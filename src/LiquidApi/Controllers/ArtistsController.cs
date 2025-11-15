@@ -12,7 +12,7 @@ public class ArtistsController(IMusicService musicService) : ControllerBase
     [HttpGet("{artistId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ArtistDto?>> GetArtistById(int artistId)
+    public async Task<ActionResult<ArtistDto>> GetArtistById(int artistId)
     {
         var artist = await musicService.GetArtist(artistId);
 
