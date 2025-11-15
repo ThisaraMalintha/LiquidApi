@@ -141,7 +141,7 @@ internal class ArtistRepository(IDbConnectionProvider connectionProvider) : IArt
             Parameters =
             {
                 new SqlParameter("@artistId", artistAlias.ArtistId),
-                new SqlParameter("@alias", artistAlias.ToString()),
+                new SqlParameter("@alias", artistAlias.Alias.ToString()),
             }
         };
 
