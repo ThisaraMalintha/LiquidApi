@@ -5,7 +5,8 @@ Demo web api to fetch and cache music catalog data from the [TheAudioDB](https:/
 ## Available Endpoints
 - `/api/v1/artists?name=artist_name` - Find a single artist by name
 - `/api/v1/artists/{artistId}` - Get artist by id
-- `/api/v1/artists/{artistId}/albums` - Get albums of an artist
+- `/api/v1/artists/{artistId}/albums?offset=<offset>&limit=<limit>` - Get albums of an artist
+
 
 ## Libraries Used
 - Microsoft.Data.SqlClient - Used to connect with the SQL Server database
