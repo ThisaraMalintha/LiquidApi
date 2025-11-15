@@ -9,6 +9,6 @@ public class PaginatedRequestDto
     public required int Offset { get; init; }
 
     [Required]
-    [Range(1, int.MaxValue)]
+    [Range(1, 100)]
     public required int Limit { get; init; }
 }

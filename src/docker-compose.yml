@@ -1,6 +1,7 @@
 services:
   liquidapi:
     image: ${DOCKER_REGISTRY-}liquidapi
+    container_name: liquid-api
     build:
       context: .
       dockerfile: LiquidApi/Dockerfile
