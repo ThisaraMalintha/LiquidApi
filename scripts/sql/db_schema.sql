@@ -40,3 +40,6 @@ CREATE TABLE [dbo].[artist_alias]
 	[alias] NVARCHAR(200) NOT NULL UNIQUE CHECK (LEN([alias]) > 0)
 )
 GO
+
+PRINT 'LiquidApi schema successfully created'
+GO
