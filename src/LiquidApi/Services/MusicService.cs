@@ -1,6 +1,5 @@
 ﻿using LiquidApi.Data.Repositories;
 using LiquidApi.Dto;
-using LiquidApi.Exceptions;
 using LiquidApi.Services.MusicApi;
 
 namespace LiquidApi.Services;
@@ -29,7 +28,8 @@ public class MusicService : IMusicService
             : ArtistDto.FromArtist(artist);
     }
 
-    public async Task<IReadOnlyList<AlbumDto>> GetAlbumsByArtist(int artistId)
+    public async Task<PaginatedResponseDto<AlbumDto>> GetAlbumsByArtist(int artistId,
+        PaginatedRequestDto pagination)
     {
         var artist = await GetArtistInternal(artistId);
 
@@ -38,18 +38,35 @@ public class MusicService : IMusicService
             throw new EntityNotFoundException(artistId, "Artist not found");
         }
 
-        var albums = await _albumRepository.GetAlbumsByArtistId(artistId);
+        var paginatedAlbums = await _albumRepository.GetAlbumsByArtistId(artistId,
+            pagination.Offset,
+            pagination.Limit);
 
-        if (albums.Count == 0)
+        if (paginatedAlbums.TotalCount == 0)
         {
-            albums = await _musicApiClient.GetAlbumsByArtist(artist.Name);
+            // TheMusicDb api just returns the full result set without any pagination.
+            var albums = await _musicApiClient.GetAlbumsByArtist(artist.Name);
 
-            await _albumRepository.SaveAlbums(albums);
+            if (albums.Any())
+            {
+                await _albumRepository.SaveAlbums(albums);
+            }
+
+            var albumPage = albums
+                .Skip(pagination.Offset)
+                .Take(pagination.Limit)
+                .ToList();
+
+            paginatedAlbums = new(albumPage, albums.Count);
         }
 
-        return albums
-            .Select(album => AlbumDto.FromArtistAndAlbum(artist, album))
-            .ToList();
+        return new PaginatedResponseDto<AlbumDto>
+        {
+            TotalCount = paginatedAlbums.TotalCount,
+            Items = paginatedAlbums.Items
+                .Select(album => AlbumDto.FromArtistAndAlbum(artist, album))
+                .ToList()
+        };
     }
 
     private async Task<Artist?> GetArtistInternal(int artistId)

@@ -1,24 +1,40 @@
-﻿using LiquidApi.Extensions;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace LiquidApi.Data.Repositories;
 
 public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumRepository
 {
-    public async Task<IReadOnlyList<Album>> GetAlbumsByArtistId(int artistId)
+    public async Task<PaginatedResult<Album>> GetAlbumsByArtistId(int artistId,
+        int offset, int limit)
     {
         const string sql =
             """
+            WITH totalCount AS 
+            (
+              SELECT 
+                COUNT(1) AS count
+              FROM 
+                album
+              WHERE
+                artist_id = @artistId
+            )
             SELECT 
               album_id,
               artist_id,
               title,
               genre,
-              release_year
+              release_year,
+              (SELECT count FROM totalCount) AS total_count
             FROM
               album
             WHERE
               artist_id = @artistId
+            ORDER BY
+              album_id
+            OFFSET 
+              @offset ROWS
+            FETCH NEXT 
+              @pageSize ROWS ONLY
             """;
 
         using var connection = connectionProvider.GetConnection();
@@ -28,7 +44,9 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
             Connection = connection,
             Parameters =
             {
-                new SqlParameter("@artistId", artistId)
+                new SqlParameter("@artistId", artistId),
+                new SqlParameter("@offset", offset),
+                new SqlParameter("@pageSize", limit)
             }
         };
 
@@ -36,9 +54,15 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
         using var reader = await cmd.ExecuteReaderAsync();
 
         var albums = new List<Album>();
+        var total = 0;
 
         while (await reader.ReadAsync())
         {
+            if (total == 0)
+            {
+                total = reader.GetInteger("total_count");
+            }
+
             albums.Add(new Album
             {
                 Id = reader.GetInteger("album_id"),
@@ -48,8 +72,8 @@ public class AlbumRepository(IDbConnectionProvider connectionProvider) : IAlbumR
                 ReleaseYear = reader.GetNullableInt("release_year")
             });
         }
-        
-        return albums;
+
+        return new(albums, total);
     }
 
     public async Task SaveAlbums(IEnumerable<Album> albums)

@@ -1,5 +1,4 @@
-﻿using LiquidApi.Exceptions;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiquidApi.Handlers;
@@ -17,7 +16,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger,
         {
             case EntityNotFoundException:
                 {
-                    httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
                     break;
                 }
             default:

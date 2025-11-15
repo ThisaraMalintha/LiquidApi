@@ -2,7 +2,8 @@
 
 public interface IAlbumRepository
 {
-    Task<IReadOnlyList<Album>> GetAlbumsByArtistId(int artistId);
+    Task<PaginatedResult<Album>> GetAlbumsByArtistId(int artistId,
+        int offset, int limit);
 
     Task SaveAlbums(IEnumerable<Album> albums);
 }

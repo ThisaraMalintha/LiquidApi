@@ -25,6 +25,7 @@ public class ArtistsController(IMusicService musicService) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ArtistDto>> GetArtistByName(
         [FromQuery(Name = "name")]
+        [MinLength(1)]
         [Required]
         string artistName)
     {
@@ -39,11 +40,12 @@ public class ArtistsController(IMusicService musicService) : ControllerBase
     }
 
     [HttpGet("{artistId}/albums")]
-    public async Task<ActionResult<IEnumerable<AlbumDto>>> GetArtistAlbums(int artistId)
+    public async Task<ActionResult<PaginatedResponseDto<AlbumDto>>> GetArtistAlbums(int artistId,
+        [FromQuery] PaginatedRequestDto pagination)
     {
-        var albums = await musicService.GetAlbumsByArtist(artistId);
+        var albums = await musicService.GetAlbumsByArtist(artistId, pagination);
 
-        if (!albums.Any())
+        if (albums.Items.Count == 0)
         {
             return NoContent();
         }

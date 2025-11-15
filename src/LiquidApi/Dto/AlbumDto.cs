@@ -6,7 +6,7 @@ public class AlbumDto
     public required int ArtistId { get; init; }
     public required string ArtistName { get; init; }
     public required string Title { get; init; }
-    public required string Genre { get; init; }
+    public required string? Genre { get; init; }
     public required int? ReleaseYear { get; init; }
 
     public static AlbumDto FromArtistAndAlbum(Artist artist, Album album)

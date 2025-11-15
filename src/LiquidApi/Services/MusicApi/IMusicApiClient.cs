@@ -8,7 +8,7 @@ public interface IMusicApiClient
     /// <param name="artistId"></param>
     /// <returns></returns>
     Task<Artist?> GetArtistById(int artistId);
-    
+
     /// <summary>
     /// Get the details of a specific artist by artist's exact name.
     /// </summary>

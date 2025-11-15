@@ -1,17 +1,16 @@
 ﻿using LiquidApi.Configuration;
-using LiquidApi.Exceptions;
 using LiquidApi.Services.MusicApi.Models;
 using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace LiquidApi.Services.MusicApi;
 
-public class TheAudioDbClient : IMusicApiClient
+public class TheAudioDbApiClient : IMusicApiClient
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TheAudioDbConfiguration _audioDbConfig;
 
-    public TheAudioDbClient(IHttpClientFactory httpClientFactory,
+    public TheAudioDbApiClient(IHttpClientFactory httpClientFactory,
         IOptions<TheAudioDbConfiguration> audioDbConfig)
     {
         _httpClientFactory = httpClientFactory;

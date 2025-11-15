@@ -1,5 +1,4 @@
-﻿using LiquidApi.Extensions;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace LiquidApi.Data.Repositories;
 

@@ -24,7 +24,7 @@ builder.Services.AddScoped<IDbConnectionProvider, SqlServerDbConnectionProvider>
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 
-builder.Services.AddScoped<IMusicApiClient, TheAudioDbClient>();
+builder.Services.AddScoped<IMusicApiClient, TheAudioDbApiClient>();
 builder.Services.AddScoped<IMusicService, MusicService>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

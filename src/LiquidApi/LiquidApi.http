@@ -8,5 +8,5 @@ GET {{LiquidApi_HostAddress}}/api/v1/artists/111259
 Accept: application/json
 ###
 
-GET {{LiquidApi_HostAddress}}/api/v1/artists/112024/albums
+GET {{LiquidApi_HostAddress}}/api/v1/artists/112045/albums?offset=10&limit=10
 Accept: application/json

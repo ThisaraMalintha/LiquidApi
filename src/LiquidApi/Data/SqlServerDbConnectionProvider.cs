@@ -4,7 +4,7 @@ namespace LiquidApi.Data;
 
 public class SqlServerDbConnectionProvider : IDbConnectionProvider
 {
-    private string _connectionString;
+    private readonly string _connectionString;
 
     public SqlServerDbConnectionProvider(IConfiguration configuration)
     {

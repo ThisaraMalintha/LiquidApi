@@ -22,6 +22,7 @@ public interface IMusicService
     /// Lookup all albums of an artist.
     /// </summary>
     /// <param name="artistId"></param>
+    /// <param name="pagination"></param>
     /// <returns>All the albums of the artist or empty if not found.</returns>
-    Task<IReadOnlyList<AlbumDto>> GetAlbumsByArtist(int artistId);
+    Task<PaginatedResponseDto<AlbumDto>> GetAlbumsByArtist(int artistId, PaginatedRequestDto pagination);
 }
