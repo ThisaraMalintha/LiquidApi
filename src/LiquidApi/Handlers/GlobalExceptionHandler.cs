@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LiquidApi.Handlers;
 
-public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger,
+internal class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger,
     IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext,

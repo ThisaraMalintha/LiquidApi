@@ -12,7 +12,7 @@ public interface IMusicService
     Task<ArtistDto?> GetArtist(int artistId);
 
     /// <summary>
-    /// Find a single artist by name.
+    /// Lookup a single artist by name.
     /// </summary>
     /// <param name="artistName"></param>
     /// <returns>Artist details or null if not found.</returns>
@@ -23,6 +23,6 @@ public interface IMusicService
     /// </summary>
     /// <param name="artistId"></param>
     /// <param name="pagination"></param>
-    /// <returns>All the albums of the artist or empty if not found.</returns>
+    /// <returns>Paginated set of albums of the artist or empty if no albums found.</returns>
     Task<PaginatedResponseDto<AlbumDto>> GetAlbumsByArtist(int artistId, PaginatedRequestDto pagination);
 }

@@ -2,7 +2,7 @@
 
 namespace LiquidApi.Data;
 
-public class SqlServerDbConnectionProvider : IDbConnectionProvider
+internal class SqlServerDbConnectionProvider : IDbConnectionProvider
 {
     private readonly string _connectionString;
 

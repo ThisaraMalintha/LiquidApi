@@ -4,7 +4,7 @@ using LiquidApi.Services.MusicApi;
 
 namespace LiquidApi.Services;
 
-public class MusicService : IMusicService
+internal class MusicService : IMusicService
 {
     private readonly IMusicApiClient _musicApiClient;
     private readonly IArtistRepository _artistRepository;
@@ -47,10 +47,12 @@ public class MusicService : IMusicService
             // TheMusicDb api just returns the full result set without any pagination.
             var albums = await _musicApiClient.GetAlbumsByArtist(artist.Name);
 
-            if (albums.Any())
+            if (albums.Count == 0)
             {
-                await _albumRepository.SaveAlbums(albums);
+                return PaginatedResponseDto<AlbumDto>.Empty();
             }
+
+            await _albumRepository.SaveAlbums(albums);
 
             var albumPage = albums
                 .Skip(pagination.Offset)

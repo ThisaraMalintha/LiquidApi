@@ -9,7 +9,9 @@ namespace LiquidApi.Controllers;
 [ApiController]
 public class ArtistsController(IMusicService musicService) : ControllerBase
 {
-    [HttpGet("{artistId}")]
+    [HttpGet("{artistId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ArtistDto?>> GetArtistById(int artistId)
     {
         var artist = await musicService.GetArtist(artistId);
@@ -23,6 +25,8 @@ public class ArtistsController(IMusicService musicService) : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ArtistDto>> GetArtistByName(
         [FromQuery(Name = "name")]
         [MinLength(1)]
@@ -39,8 +43,11 @@ public class ArtistsController(IMusicService musicService) : ControllerBase
         return artist;
     }
 
-    [HttpGet("{artistId}/albums")]
-    public async Task<ActionResult<PaginatedResponseDto<AlbumDto>>> GetArtistAlbums(int artistId,
+    [HttpGet("{artistId:int}/albums")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult<PaginatedResponseDto<AlbumDto>>> GetArtistAlbums(
+        [FromRoute] int artistId,
         [FromQuery] PaginatedRequestDto pagination)
     {
         var albums = await musicService.GetAlbumsByArtist(artistId, pagination);

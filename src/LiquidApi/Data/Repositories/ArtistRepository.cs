@@ -2,7 +2,7 @@
 
 namespace LiquidApi.Data.Repositories;
 
-public class ArtistRepository(IDbConnectionProvider connectionProvider) : IArtistRepository
+internal class ArtistRepository(IDbConnectionProvider connectionProvider) : IArtistRepository
 {
     public async Task<Artist?> GetArtistById(int artistId)
     {

@@ -31,9 +31,13 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
+
     app.MapOpenApi();
 
     app.UseSwaggerUI(options =>
@@ -41,8 +45,6 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "v1");
     });
 }
-
-app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

@@ -5,7 +5,7 @@ using System.Net;
 
 namespace LiquidApi.Services.MusicApi;
 
-public class TheAudioDbApiClient : IMusicApiClient
+internal class TheAudioDbApiClient : IMusicApiClient
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TheAudioDbConfiguration _audioDbConfig;
